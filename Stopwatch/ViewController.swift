@@ -26,6 +26,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        //stopButton.titleLabel?.adjustsFontSizeToFitWidth = true
         stopButton.isEnabled = false
     }
     
@@ -81,6 +82,7 @@ class ViewController: UIViewController {
             }(),
             for: .normal
         )
+        
     }
 }
 
