@@ -15,26 +15,39 @@ class ViewController: UIViewController {
     }
     
     var state: State = .idle
-    
-    @IBOutlet weak var timerLabel: UILabel!
     var elapsedTime: Float = 0.0
     var timer: Timer?
+    @IBOutlet weak var timerLabel: UILabel!
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
+    @IBOutlet weak var resetButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        //stopButton.titleLabel?.adjustsFontSizeToFitWidth = true
         stopButton.isEnabled = false
+        resetButton.isEnabled = false
+        
+        //角丸の設定
+        startButton.layer.cornerRadius = 10
+        stopButton.layer.cornerRadius = 10
+        resetButton.layer.cornerRadius = 10
+        
+        //影の濃さ
+        startButton.layer.shadowOpacity = 0.7
+        stopButton.layer.shadowOpacity = 0.7
+        resetButton.layer.shadowOpacity = 0.7
+        
+        //影の方向
+        startButton.layer.shadowOffset = CGSize(width: 5, height: 5)
+        stopButton.layer.shadowOffset = CGSize(width: 5, height: 5)
+        resetButton.layer.shadowOffset = CGSize(width: 5, height: 5)
     }
     
     @IBAction func tapStart(_ sender: Any) {
         state = .running
-        startButton.isEnabled = false
-        stopButton.isEnabled = true
-        updateUI()
+        switchButton()
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { (timer) in
             self.elapsedTime += 0.01
@@ -47,42 +60,35 @@ class ViewController: UIViewController {
         }
     }
     
-    
     @IBAction func tapStop(_ sender: Any) {
-        switch state {
-        case .idle:
-            break
-        case .running:
-            if let t = timer {
-                t.invalidate()
-            }
-            startButton.isEnabled = true
-            state = .pause
-        case .pause:
-            elapsedTime = 0.0
-            self.timerLabel.text = "00:00:00"
-            stopButton.isEnabled = false
-            state = .idle
+        if let t = timer {
+            t.invalidate()
         }
-        
-        updateUI()
+        state = .pause
+        switchButton()
     }
     
-    func updateUI() {
-        stopButton.setTitle(
-            {
-                switch state {
-                case .idle:
-                    return "STOP"
-                case .running:
-                    return "STOP"
-                case .pause:
-                    return "RESET"
-                }
-            }(),
-            for: .normal
-        )
-        
+    @IBAction func tapReset(_ sender: Any) {
+        elapsedTime = 0.0
+        self.timerLabel.text = "00:00:00"
+        state = .idle
+        switchButton()
+    }
+    
+    func switchButton() {
+        switch state {
+        case .idle:
+            stopButton.isEnabled = false
+            resetButton.isEnabled = false
+        case .running:
+            startButton.isEnabled = false
+            stopButton.isEnabled = true
+            resetButton.isEnabled = false
+        case .pause:
+            startButton.isEnabled = true
+            stopButton.isEnabled = false
+            resetButton.isEnabled = true
+        }
     }
 }
 
